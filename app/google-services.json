@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "986307958601",
+    "firebase_url": "https://note-84b90.firebaseio.com",
+    "project_id": "note-84b90",
+    "storage_bucket": "note-84b90.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986307958601:android:2784590d0342db8c",
+        "android_client_info": {
+          "package_name": "com.example.carlito.note"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "986307958601-r8dq3gsbufg1sc61nu47sp8fjmbmnbbu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.carlito.note",
+            "certificate_hash": "CC56DADC5338164175632E0343AF6127270E93EC"
+          }
+        },
+        {
+          "client_id": "986307958601-ecp7te2406p8mlof7s863o7713utc5ph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIdc6_W5PzfXuKpqUtAN69Hbb1Cb8rkM8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "986307958601-ecp7te2406p8mlof7s863o7713utc5ph.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
