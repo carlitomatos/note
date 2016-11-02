@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Note</string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-4935763923036287/2990440051</string>
+    <string name="banner_interstitial_id">ca-app-pub-4935763923036287/1374106059</string>
+
 </resources>

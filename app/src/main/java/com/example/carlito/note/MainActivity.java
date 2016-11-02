@@ -32,10 +32,16 @@ import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private final static String TAG = "tag";
     private GoogleApiClient mGoogleApiClient;
     private Toolbar mToolbar;
+    private InterstitialAd mInterstitialAd;
     /*
    Iniciar uma nova instância da Activity
     */
@@ -52,6 +58,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         setSupportActionBar(mToolbar);
         configureGoogleApiClient();
         configurarDrawer();
+
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mInterstitialAd.isLoaded()){
+                    mInterstitialAd.show();
+                }
+            }
+        });
+
+        configureAds();
+        configureInterstitialAd();
     }
     private void configurarDrawer(){
         // Configura a library Glide para carregar a imagem no Drawer
@@ -130,5 +148,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void configureAds() {
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+    }
+    private void configureInterstitialAd() {
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.banner_interstitial_id));
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                Toast.makeText(getApplicationContext(),"Fechou o ADS",Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestNewInterstitial();
+    }
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        mInterstitialAd.loadAd(adRequest);
     }
 }
