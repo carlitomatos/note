@@ -37,11 +37,26 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+
+import com.example.carlito.note.firebase.*;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import java.util.List;
+
+import com.google.firebase.database.FirebaseDatabase;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private final static String TAG = "tag";
     private GoogleApiClient mGoogleApiClient;
     private Toolbar mToolbar;
     private InterstitialAd mInterstitialAd;
+    private EditText mEditText;
+    private TextView mTextViewCodigo;
+    private TextView mTextViewAnotacao;
+
+    private Anotacao mUltimaAnotacao;
     /*
    Iniciar uma nova instância da Activity
     */
@@ -67,6 +82,55 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
             }
         });
+
+        mEditText = (EditText) findViewById(R.id.edit_text);
+        mTextViewCodigo = (TextView) findViewById(R.id.codigo_anotacao);
+        mTextViewAnotacao = (TextView) findViewById(R.id.anotacao);
+
+
+        //
+        // Configurar o Firebase Database para ativar modo offline
+        //
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+
+        //
+        // Ação do botão salvar
+        //
+        findViewById(R.id.bt_salvar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                salvarNovoRegistro();
+            }
+        });
+
+
+        //
+        // Ação do botão atualizar
+        //
+        findViewById(R.id.bt_atualizar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                atualizarRegistro();
+            }
+        });
+
+
+        //
+        // Ação do botão deletar
+        //
+        findViewById(R.id.bt_deletar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deletarRegistro();
+            }
+        });
+
+
+        //
+        // Busca as anotações do firebase
+        //
+        obterTodos();
 
         configureAds();
         configureInterstitialAd();
@@ -172,4 +236,97 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .build();
         mInterstitialAd.loadAd(adRequest);
     }
+
+    private void deletarRegistro(){
+
+        // Se nao for nulo
+
+        if(mUltimaAnotacao != null){
+            //
+            // Manda deletar
+            //
+            DeletarAnotacao deletarAnotacao = new DeletarAnotacao();
+            deletarAnotacao.deletar(mUltimaAnotacao);
+            //
+            // Recarregar lista
+            //
+            obterTodos();
+        }
+    }
+
+    private void atualizarRegistro(){
+
+        // Se nao for nulo
+
+        if(mUltimaAnotacao != null){
+
+
+            //
+            // Atualiza o valor da anotação com base no que foi digitado no edittext
+            //
+            mUltimaAnotacao.setValor(mEditText.getText().toString());
+
+            //
+            // Manda deletar
+            //
+            AtualizarAnotacao atualizarAnotacao = new AtualizarAnotacao();
+            atualizarAnotacao.atualizar(mUltimaAnotacao);
+            obterTodos();
+            //
+            // Recarregar lista
+            //
+            obterTodos();
+        }
+    }
+
+    private void salvarNovoRegistro() {
+
+        //
+        // Salva uma nova anotação
+        //
+
+        SalvarAnotacao salvar = new SalvarAnotacao();
+        salvar.novoRegistro(mEditText.getText().toString());
+
+        // Limpa o campo de texto
+        mEditText.setText("");
+
+        // Atualiza a lista
+        obterTodos();
+    }
+
+    private void obterTodos(){
+        ObterNotas obterNotas = new ObterNotas();
+        obterNotas.todos(new ObterNotas.OnObterAnotacoesListener() {
+            @Override
+            public void onAnotacoesObtidas(List<Anotacao> lista) {
+
+                //
+                // Se existir anotacoes, pega a ultima e exibe em tela
+                //
+                if(lista.size() > 0){
+                    mUltimaAnotacao = lista.get(lista.size() - 1);
+                    exibirAnotacao();
+                }else{
+                    // Seta para nulo a ultima anotação
+                    mUltimaAnotacao = null;
+                    //
+                    // Limpa os valores da tela
+                    //
+                    mTextViewAnotacao.setText("");
+                    mTextViewCodigo.setText("");
+                }
+
+            }
+        });
+    }
+
+    private void exibirAnotacao(){
+        //
+        // Exibe em tela as informações da anotação
+        //
+        mTextViewAnotacao.setText(mUltimaAnotacao.getValor());
+        mTextViewCodigo.setText(mUltimaAnotacao.getUid());
+    }
+
 }
